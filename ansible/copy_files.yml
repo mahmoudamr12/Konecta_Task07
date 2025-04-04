@@ -1,0 +1,10 @@
+---
+- name: Copy all files to remote VM
+  hosts: my_vm
+  become: false
+  tasks:
+    - name: Synchronize all files in current directory to /home/ubuntu on remote
+      synchronize:
+        src: "./"
+        dest: "/home/ubuntu/"
+        recursive: yes

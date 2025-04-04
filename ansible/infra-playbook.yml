@@ -1,0 +1,17 @@
+- hosts: infra
+  become: true
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Run Node Exporter Container
+      command: docker run -d --name=node-exporter2 -p 9100:9100 prom/node-exporter

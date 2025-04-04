@@ -1,0 +1,22 @@
+groups:
+  - name: example
+    rules:
+      # Alert when a container goes down
+      - alert: ContainerDown
+        expr: container_last_seen{instance="3.95.223.163:8080"} < time() - 60
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container down on App VM"
+          description: "Container {{ $labels.name }} has not been seen in over a minute on App VM."
+
+      # Alert when Infra VM becomes unreachable
+      - alert: InfraVMUnreachable
+        expr: up{job="infra"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: "The Infra VM (44.201.121.205) is unreachable."
+          summary: "The Infra VM has not been responding for 5 minutes."

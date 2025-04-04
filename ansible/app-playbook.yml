@@ -1,0 +1,28 @@
+- hosts: app
+  become: true
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Copy Docker Compose file
+      copy:
+        src: app-docker-compose.yml
+        dest: /home/ubuntu/app-docker-compose.yml
+
+    - name: Start App stack
+      command: docker-compose -f /home/ubuntu/app-docker-compose.yml up -d

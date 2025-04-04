@@ -1,0 +1,60 @@
+- hosts: prometheus
+  become: true
+  tasks:
+    - name: Install prerequisite packages
+      apt:
+        name: ["apt-transport-https", "ca-certificates", "curl", "software-properties-common", "python3-pip"]
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Start Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Check Docker version
+      command: docker --version
+      register: docker_version_output
+
+
+    - name: Debug Docker version
+      debug:
+        msg: "{{ docker_version_output.stdout }}"
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+    - name: Copy Docker Compose file
+      copy:
+        src: prometheus-docker-compose.yml
+        dest: /home/ubuntu/prometheus-docker-compose.yml
+    - name: Copy Prometheus configuration file (prometheus.yml)
+      copy:
+        src: prometheus.yml
+        dest: /home/ubuntu/prometheus.yml
+
+    - name: Copy Alert rules configuration file (alert-rules.yml)
+      copy:
+        src: alert-rules.yml
+        dest: /home/ubuntu/alert-rules.yml
+
+
+    - name: Start Prometheus stack
+      command: docker-compose -f /home/ubuntu//prometheus-docker-compose.yml up -d
