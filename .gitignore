@@ -1,23 +1,18 @@
-# Ignore everything Terraform-related inside terraform/ directory
+# Ignore the .terraform directory (used for provider plugins, etc.)
+terraform/.terraform/
 
-# Local .terraform directories
-terraform/**/.terraform/
+# Ignore Terraform lock and state files
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
 
-# Terraform state files
-terraform/**/*.tfstate
-terraform/**/*.tfstate.*
+# Ignore sensitive variable files (optional — only if you use them)
+terraform/*.tfvars
+terraform/*.tfvars.json
+terraform/secrets.tfvars
 
-# Crash logs
-terraform/**/crash.log
+# Ignore Terraform plan output files
+terraform/*.tfplan
 
-# Override and variable files (often contain secrets)
-terraform/**/*.tfvars
-terraform/**/*.tfvars.json
-terraform/**/secrets.tfvars
-
-# Terraform plan files
-terraform/**/*.tfplan
-
-# Terraform CLI config files (if any)
-terraform/**/.terraformrc
-terraform/**/terraform.rc
+# Optional: Crash logs (in case Terraform ever generates them)
+terraform/crash.log
